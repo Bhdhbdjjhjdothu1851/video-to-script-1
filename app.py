@@ -14,3 +14,26 @@ if uploaded_file is not None:
     result = model.transcribe("temp_file")
     st.success("ပြီးပါပြီ!")
     st.text_area("ရရှိလာသော စာသား (Script)", result["text"], height=300)
+import streamlit as st
+import whisper
+
+st.title("Video to Script Converter")
+
+# မြန်မာစာအတွက် Accuracy ပိုကောင်းစေရန် small model ကို ပြောင်းသုံးနိုင်ပါသည်။ (base အစား small ထားပါ)
+model = whisper.load_model("small")
+
+uploaded_file = st.file_uploader(
+    "ဗီဒီယိုဖိုင် တင်ပါ", type=["mp4", "mkv", "mp3", "wav"]
+)
+
+if uploaded_file is not None:
+    with open("temp_file", "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    st.info("စာသားအဖြစ် ပြောင်းလဲနေပါသည်...")
+
+    # language='my' (Burmese/Myanmar) ဟု တိုက်ရိုက်သတ်မှတ်ပေးလိုက်ခြင်း ဖြစ်သည်
+    result = model.transcribe("temp_file", language="my", task="transcribe")
+
+    st.success("ပြီးပါပြီ!")
+    st.text_area("ရရှိလာသော စာသား (Script)", result["text"], height=300)
